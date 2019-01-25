@@ -8,8 +8,8 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, FlatList, ActivityIndicator} from 'react-native';
-import {List, ListItem, Avatar, SearchBar} from 'react-native-elements';
+import {Platform, StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableWithoutFeedback, TouchableOpacity} from 'react-native';
+import {List, ListItem, Avatar, SearchBar, colors} from 'react-native-elements';
 import Image from 'react-native-remote-svg';
 
 export default class App extends Component{
@@ -22,19 +22,19 @@ export default class App extends Component{
     }
   }
 
-
+  // Carrega da API os dados sobre as moedas 
   componentDidMount () {
-      fetch('https://api.coinranking.com/v1/public/coins')
-      .then ( response => response.json() )
-      .then ( responseJson => {
-        this.setState ({
-          isLoading: false,
-          dataSource: responseJson.data.coins,
-        })
+    fetch('https://api.coinranking.com/v1/public/coins')
+    .then ( response => response.json() )
+    .then ( responseJson => {
+      this.setState ({
+        isLoading: false,
+        dataSource: responseJson.data.coins,
       })
-      .catch ( ( error ) => {
-        console.log(error);
-      });
+    })
+    .catch ( ( error ) => {
+      console.log(error);
+    });
   }
 
   renderSeparator = () => {
@@ -42,9 +42,8 @@ export default class App extends Component{
       <View
         style = {{
           height:1,
-          width: '80%',
+          width: '100%',
           backgroundColor: '#CED0CE',
-          marginLeft: '20%',
         }}
       />
     );
@@ -64,6 +63,38 @@ export default class App extends Component{
       </View>);
   }
 
+  change = (item) => {
+    if (item.change < 0) {
+      return (
+        <View style={{flexDirection: 'row', paddingLeft: 5}}>
+          <Text>{item.name}</Text>
+          <Text style={{marginLeft:10}}>${item.price}</Text>
+          <Text style={{color: '#d94040', marginLeft:'2.5%'}}>{item.change}%</Text>
+        </View>
+      );
+    } else if (item.change == 0) {
+      return (
+        <View style={{flexDirection: 'row', paddingLeft: 5}}>
+          <Text>{item.name}</Text>
+          <Text style={{marginLeft:10}}>${item.price}</Text>
+          <Text style={{color: '#428bca', marginLeft:'2.5%'}}>{item.change}%</Text>
+        </View>
+      );
+    } 
+    
+    return (
+      <View style={{flexDirection: 'row', paddingLeft: 5}}>
+          <Text>{item.name}</Text>
+          <Text style={{marginLeft:10}}>${item.price}</Text>
+          <Text style={{color: '#009e73', marginLeft:'2.5%'}}>{item.change}%</Text>
+        </View>
+    );
+  }
+
+  coinPressed = (item) => {
+    alert(item.name)
+  }
+
   render() {
     if (this.state.isLoading) {
       return (
@@ -78,15 +109,16 @@ export default class App extends Component{
           <FlatList
             data={this.state.dataSource}
             renderItem={({ item }) => (
-              <ListItem 
-                roundAvatar
-                title={item.name}
-                subtitle={item.rank}
-                avatar={
-                  <Image source={{ uri: item.iconUrl }}
-                  style={{ width: 50, height: 50}}/>
-                }
-              />
+              <TouchableWithoutFeedback onPress={ () => this.coinPressed(item)}>
+                <ListItem 
+                  roundAvatar
+                  title={this.change(item)}
+                  avatar={
+                    <Image source={{ uri: item.iconUrl }}
+                    style={{ width: 50, height: 50}}/>
+                  }
+                />
+              </TouchableWithoutFeedback>
             )}
 
             keyExtractor = {item => item.rank}
