@@ -4,12 +4,13 @@
  *
  * @format
  * @flow
- * @lint-ignore-every XPLATJSCOPYRIGHT1
+ * @lint-ignore-every XPLATJSCOPYRIGHT1s
  */
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, FlatList, ActivityIndicator} from 'react-native';
-import {List, ListItem} from 'react-native-elements';
+import {List, ListItem, Avatar, SearchBar} from 'react-native-elements';
+import Image from 'react-native-remote-svg';
 
 export default class App extends Component{
 
@@ -36,6 +37,33 @@ export default class App extends Component{
       });
   }
 
+  renderSeparator = () => {
+    return (
+      <View
+        style = {{
+          height:1,
+          width: '80%',
+          backgroundColor: '#CED0CE',
+          marginLeft: '20%',
+        }}
+      />
+    );
+  }
+
+  renderHeater = () => {
+    return <SearchBar placeholder="insert coin code..." lightTheme round/>
+  }
+
+  renderFooter = () => {
+    if (!this.state.isLoading) {
+      return null;
+    }
+
+    return (<View style={{paddingVertical: 20, borderTopWidth: 1, borderTopColor: '#CED0CE'}}>
+        <ActivityIndicator animating size='large' />
+      </View>);
+  }
+
   render() {
     if (this.state.isLoading) {
       return (
@@ -43,6 +71,7 @@ export default class App extends Component{
           <ActivityIndicator />
         </View>
       );
+
     } else {
       return (
         <List>
@@ -53,9 +82,17 @@ export default class App extends Component{
                 roundAvatar
                 title={item.name}
                 subtitle={item.rank}
-                avatar={{uri: item.iconUrl}}
+                avatar={
+                  <Image source={{ uri: item.iconUrl }}
+                  style={{ width: 50, height: 50}}/>
+                }
               />
             )}
+
+            keyExtractor = {item => item.rank}
+            ItemSeparatorComponent = {this.renderSeparator}
+            ListHeaderComponent = {this.renderHeater}
+            ListFooterComponent = {this.renderFooter}
           />
         </List>
       );
