@@ -14,7 +14,7 @@ import Table from 'react-native-simple-table';
 
 const columns = [
     {
-      title: 'Data',
+      title: 'Date',
       dataIndex: 'timestamp',
       width: 170
     },
@@ -27,7 +27,7 @@ const columns = [
 
 class CoinScreen extends Component{
     static navigationOptions = {
-        title: 'Coin Screen',
+        title: 'Coin Details',
     };
 
     constructor (props) {
@@ -99,14 +99,14 @@ class CoinScreen extends Component{
                 style={styles.container}>      
                     <Image source={{ uri: this.state.dataSource.iconUrl }}
                       style={{ width: 50, height: 50}}/>
-                    <Text style={{fontHeight:'bold'}}>Name: {this.state.dataSource.name}</Text>
+                    <Text>Name: {this.state.dataSource.name}</Text>
                     <Text>Rank: {this.state.dataSource.rank}</Text>
                     <Text>Price: {this.state.dataSource.price}</Text>
                     <Text>Market Cap: {this.state.dataSource.marketCap}</Text>
                     <Text>Change: {this.state.dataSource.change}</Text>
                 
                     <View style={styles.container}>
-                        <Text style={styles.title}>History Last 7 days</Text>
+                        <Text style={styles.title}>History (Last 7 days)</Text>
                         <Table height={250} columnWidth={60} columns={columns} dataSource={this.state.history.reverse()} />
                     </View>
                 </View>

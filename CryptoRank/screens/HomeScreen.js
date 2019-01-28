@@ -11,6 +11,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableWithoutFeedback, TouchableOpacity} from 'react-native';
 import {List, ListItem, Avatar, SearchBar, colors} from 'react-native-elements';
 import Image from 'react-native-remote-svg';
+import _ from 'lodash';
 
 class HomeScreen extends Component{
 
@@ -23,6 +24,7 @@ class HomeScreen extends Component{
       this.state = {
         isLoading: true,
         dataSource: null,
+        filteredData: null,
       }
     }
   
@@ -34,6 +36,7 @@ class HomeScreen extends Component{
         this.setState ({
           isLoading: false,
           dataSource: responseJson.data.coins,
+          filteredData: responseJson.data.coins,
         })
       })
       .catch ( ( error ) => {
@@ -54,7 +57,15 @@ class HomeScreen extends Component{
     }
   
     renderHeater = () => {
-      return <SearchBar placeholder="insert coin code..." lightTheme round/>
+      return <SearchBar placeholder="insert coin name here..." lightTheme round onChangeText={this.handlerSearch}/>
+    }
+
+    handlerSearch = text => {
+      const data = _.filter(this.state.dataSource, coin => {
+        return coin.name.toLowerCase().includes(text.toLowerCase());
+      })
+
+      this.setState({filteredData: data});
     }
   
     renderFooter = () => {
@@ -108,7 +119,7 @@ class HomeScreen extends Component{
         return (
           <List>
             <FlatList
-              data={this.state.dataSource}
+              data={this.state.filteredData}
               renderItem={({ item }) => (
                 <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Coin', {itemId: item.id})}>
                   <ListItem 
@@ -122,7 +133,7 @@ class HomeScreen extends Component{
                 </TouchableWithoutFeedback>
               )}
   
-              keyExtractor = {item => item.rank}
+              keyExtractor = {item => item.name}
               ItemSeparatorComponent = {this.renderSeparator}
               ListHeaderComponent = {this.renderHeater}
               ListFooterComponent = {this.renderFooter}
