@@ -3,6 +3,7 @@ Página responsiva para visualizar as flutuações de mercados das criptomoedas
 
 ## To run this project on linux
 Clone or download the project
+
 Open a terminal, go to the root path of project and run these commands:
 
 ### step 1
